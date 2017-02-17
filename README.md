@@ -1,1 +1,1 @@
-# lingvo--PosTagger_ru
+# lingvo--PosTagger-ru
