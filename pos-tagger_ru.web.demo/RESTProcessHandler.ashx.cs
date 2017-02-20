@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Linq;
-using System.Text;
 using System.Web;
 
 using lingvo.morphology;
@@ -26,10 +25,10 @@ namespace lingvo
         public static readonly string POSTAGGER_TEMPLATE_FILENAME          = ConfigurationManager.AppSettings[ "POSTAGGER_TEMPLATE_FILENAME" ];
         public static readonly string POSTAGGER_RESOURCES_XML_FILENAME     = ConfigurationManager.AppSettings[ "POSTAGGER_RESOURCES_XML_FILENAME" ];
 
-        public static readonly string   MORPHO_BASE_DIRECTORY         = ConfigurationManager.AppSettings[ "MORPHO_BASE_DIRECTORY" ];
-        public static readonly string[] MORPHO_MORPHOTYPES_FILENAMES  = ConfigurationManager.AppSettings[ "MORPHO_MORPHOTYPES_FILENAMES" ].ToFilesArray();
-        public static readonly string[] MORPHO_PROPERNAMES_FILENAMES  = ConfigurationManager.AppSettings[ "MORPHO_PROPERNAMES_FILENAMES" ].ToFilesArray();
-        public static readonly string[] MORPHO_COMMON_FILENAMES       = ConfigurationManager.AppSettings[ "MORPHO_COMMON_FILENAMES"      ].ToFilesArray();
+        public static readonly string   MORPHO_BASE_DIRECTORY        = ConfigurationManager.AppSettings[ "MORPHO_BASE_DIRECTORY" ];
+        public static readonly string[] MORPHO_MORPHOTYPES_FILENAMES = ConfigurationManager.AppSettings[ "MORPHO_MORPHOTYPES_FILENAMES" ].ToFilesArray();
+        public static readonly string[] MORPHO_PROPERNAMES_FILENAMES = ConfigurationManager.AppSettings[ "MORPHO_PROPERNAMES_FILENAMES" ].ToFilesArray();
+        public static readonly string[] MORPHO_COMMON_FILENAMES      = ConfigurationManager.AppSettings[ "MORPHO_COMMON_FILENAMES"      ].ToFilesArray();
         private static string[] ToFilesArray( this string value )
         {
             var array = value.Split( new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries )
@@ -42,11 +41,11 @@ namespace lingvo
         public static readonly string MORPHO_AMBIGUITY_TEMPLATE_FILENAME_5G = ConfigurationManager.AppSettings[ "MORPHO_AMBIGUITY_TEMPLATE_FILENAME_5G" ];
         public static readonly string MORPHO_AMBIGUITY_TEMPLATE_FILENAME_3G = ConfigurationManager.AppSettings[ "MORPHO_AMBIGUITY_TEMPLATE_FILENAME_3G" ];
 
-        public static readonly int    MAX_INPUTTEXT_LENGTH                = ConfigurationManager.AppSettings[ "MAX_INPUTTEXT_LENGTH"                ].ToInt32();
-        public static readonly int    CONCURRENT_FACTORY_INSTANCE_COUNT   = ConfigurationManager.AppSettings[ "CONCURRENT_FACTORY_INSTANCE_COUNT"   ].ToInt32();
-        public static readonly int    SAME_IP_INTERVAL_REQUEST_IN_SECONDS = ConfigurationManager.AppSettings[ "SAME_IP_INTERVAL_REQUEST_IN_SECONDS" ].ToInt32();
-        public static readonly int    SAME_IP_MAX_REQUEST_IN_INTERVAL     = ConfigurationManager.AppSettings[ "SAME_IP_MAX_REQUEST_IN_INTERVAL"     ].ToInt32();        
-        public static readonly int    SAME_IP_BANNED_INTERVAL_IN_SECONDS  = ConfigurationManager.AppSettings[ "SAME_IP_BANNED_INTERVAL_IN_SECONDS"  ].ToInt32();
+        public static readonly int MAX_INPUTTEXT_LENGTH                = ConfigurationManager.AppSettings[ "MAX_INPUTTEXT_LENGTH"                ].ToInt32();
+        public static readonly int CONCURRENT_FACTORY_INSTANCE_COUNT   = ConfigurationManager.AppSettings[ "CONCURRENT_FACTORY_INSTANCE_COUNT"   ].ToInt32();
+        public static readonly int SAME_IP_INTERVAL_REQUEST_IN_SECONDS = ConfigurationManager.AppSettings[ "SAME_IP_INTERVAL_REQUEST_IN_SECONDS" ].ToInt32();
+        public static readonly int SAME_IP_MAX_REQUEST_IN_INTERVAL     = ConfigurationManager.AppSettings[ "SAME_IP_MAX_REQUEST_IN_INTERVAL"     ].ToInt32();        
+        public static readonly int SAME_IP_BANNED_INTERVAL_IN_SECONDS  = ConfigurationManager.AppSettings[ "SAME_IP_BANNED_INTERVAL_IN_SECONDS"  ].ToInt32();
     }
 }
 
@@ -192,29 +191,6 @@ namespace lingvo.postagger
         {
             private static readonly object _SyncLock = new object();
 
-            private static MorphoModelConfig             CreateMorphoModelConfig()
-            {
-                //_ModelLoadingErrors.Clear();
-
-                var config = new MorphoModelConfig()
-                {
-                    TreeDictionaryType   = TreeDictionaryTypeEnum.Native,
-                    BaseDirectory        = Config.MORPHO_BASE_DIRECTORY,
-                    MorphoTypesFilenames = Config.MORPHO_MORPHOTYPES_FILENAMES,
-                    ProperNamesFilenames = Config.MORPHO_PROPERNAMES_FILENAMES,
-                    CommonFilenames      = Config.MORPHO_COMMON_FILENAMES,
-                    ModelLoadingErrorCallback = (s1, s2) =>
-                    {
-                        //_ModelLoadingErrors.Append( s1 ).Append( " - " ).Append( s2 ).Append( "<br/>" );
-    #if DEBUG
-                        //Debug.WriteLine( s1 + " - " + s2 );
-                        Console.WriteLine( s1 + " - " + s2 );
-    #endif
-                    }
-                };
-
-                return (config);
-            }
             private static PosTaggerProcessorConfig      CreatePosTaggerProcessorConfig()
             {
                 var sentSplitterConfig = new SentSplitterConfig( Config.SENT_SPLITTER_RESOURCES_XML_FILENAME,
@@ -229,8 +205,33 @@ namespace lingvo.postagger
                 };
 
                 return (config);
+            }            
+            private static MorphoModelConfig             CreateMorphoModelConfig()
+            {
+                //_ModelLoadingErrors.Clear();
+
+                var config = new MorphoModelConfig()
+                {
+                    TreeDictionaryType   = TreeDictionaryTypeEnum.Native,
+                    BaseDirectory        = Config.MORPHO_BASE_DIRECTORY,
+                    MorphoTypesFilenames = Config.MORPHO_MORPHOTYPES_FILENAMES,
+                    ProperNamesFilenames = Config.MORPHO_PROPERNAMES_FILENAMES,
+                    CommonFilenames      = Config.MORPHO_COMMON_FILENAMES,
+                    ModelLoadingErrorCallback = (s1, s2) =>
+                    {
+                        //_ModelLoadingErrors.Append( s1 ).Append( " - " ).Append( s2 ).Append( "<br/>" );
+                        /*
+    #if DEBUG
+                        //Debug.WriteLine( s1 + " - " + s2 );
+                        Console.WriteLine( s1 + " - " + s2 );
+    #endif
+                        */
+                    }
+                };
+
+                return (config);
             }
-            private static MorphoAmbiguityResolverConfig CreateMorphoAmbiguityConfig()
+            private static MorphoAmbiguityResolverModel  CreateMorphoAmbiguityResolverModel()
             {
                 var config = new MorphoAmbiguityResolverConfig()
                 {
@@ -239,10 +240,6 @@ namespace lingvo.postagger
                     TemplateFilename_3g = Config.MORPHO_AMBIGUITY_TEMPLATE_FILENAME_3G,
                 };
 
-                return (config);
-            }
-            private static MorphoAmbiguityResolverModel  CreateMorphoAmbiguityResolverModel( MorphoAmbiguityResolverConfig config )
-            {
                 var model = new MorphoAmbiguityResolverModel( config );
                 return (model);
             }
@@ -259,10 +256,11 @@ namespace lingvo.postagger
                         f = _ConcurrentFactory;
                         if ( f == null )
                         {
-                            {
+                            {                                
+                                var morphoAmbiguityModel = CreateMorphoAmbiguityResolverModel();
+                                var morphoModelConfig    = CreateMorphoModelConfig();
+                                var morphoModel          = MorphoModelFactory.Create( morphoModelConfig );                                
                                 var config               = CreatePosTaggerProcessorConfig();
-                                var morphoModel          = MorphoModelFactory.Create( CreateMorphoModelConfig() );
-                                var morphoAmbiguityModel = CreateMorphoAmbiguityResolverModel( CreateMorphoAmbiguityConfig() );
 
                                 f = new ConcurrentFactory( config, morphoModel, morphoAmbiguityModel, Config.CONCURRENT_FACTORY_INSTANCE_COUNT );
                                 _ConcurrentFactory = f;

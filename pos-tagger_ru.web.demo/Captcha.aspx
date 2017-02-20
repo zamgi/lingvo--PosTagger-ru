@@ -6,7 +6,7 @@
 
 <html xmlns="http://www.w3.org/1999/xhtml">
 <head runat="server">
-    <title>Нормализация текста: приведение всех слов к словарной форме в тексте на русском языке - Компьютерная лингвистика. Обработка неструктурированной информации.</title>
+    <title>Нормализация текста: приведение всех слов к словарной форме</title>
     <meta http-equiv="Content-Type" content="text/html; charset=utf-8"/>
     <style type="text/css">
         body {
