@@ -18,8 +18,10 @@ namespace lingvo.postagger
         private readonly List< word_t >               _Words;
         private readonly PosTaggerScriber             _PosTaggerScriber;
         private readonly PosTaggerPreMerging          _PosTaggerPreMerging;
-        private Tokenizer.ProcessSentCallbackDelegate _ProcessSentCallback;
         private readonly PosTaggerMorphoAnalyzer      _PosTaggerMorphoAnalyzer;
+        private Tokenizer.ProcessSentCallbackDelegate _ProcessSentCallback_1_Delegate;
+        private Tokenizer.ProcessSentCallbackDelegate _ProcessSentCallback_2_Delegate;
+        private Tokenizer.ProcessSentCallbackDelegate _OuterProcessSentCallback_Delegate;
         #endregion
 
         #region [.ctor().]
@@ -34,7 +36,9 @@ namespace lingvo.postagger
             _PosTaggerScriber        = PosTaggerScriber.Create( config.ModelFilename, config.TemplateFilename );
             _PosTaggerPreMerging     = new PosTaggerPreMerging( config.Model );
             _PosTaggerMorphoAnalyzer = new PosTaggerMorphoAnalyzer( morphoModel, morphoAmbiguityModel );
-		}
+            _ProcessSentCallback_1_Delegate = new Tokenizer.ProcessSentCallbackDelegate( ProcessSentCallback_1 );
+            _ProcessSentCallback_2_Delegate = new Tokenizer.ProcessSentCallbackDelegate( ProcessSentCallback_2 );
+        }
 
         public void Dispose()
         {
@@ -75,11 +79,11 @@ namespace lingvo.postagger
         {
             _Words.Clear();
 
-            _Tokenizer.run( text, splitBySmiles, ProcessSentCallback );
+            _Tokenizer.Run( text, splitBySmiles, _ProcessSentCallback_1_Delegate );
 
             return (_Words);
         }
-        private void ProcessSentCallback( List< word_t > words )
+        private void ProcessSentCallback_1( List< word_t > words )
         {
             //-merge-phrases-abbreviations-numbers-
             _PosTaggerPreMerging.Run( words );
@@ -99,13 +103,13 @@ namespace lingvo.postagger
 
         public void Run( string text, bool splitBySmiles, Tokenizer.ProcessSentCallbackDelegate processSentCallback )
         {
-            _ProcessSentCallback = processSentCallback;
+            _OuterProcessSentCallback_Delegate = processSentCallback;
 
-            _Tokenizer.run( text, splitBySmiles, ProcessSentCallback_Callback );
+            _Tokenizer.Run( text, splitBySmiles, _ProcessSentCallback_2_Delegate );
 
-            _ProcessSentCallback = null;
+            _OuterProcessSentCallback_Delegate = null;
         }
-        private void ProcessSentCallback_Callback( List< word_t > words )
+        private void ProcessSentCallback_2( List< word_t > words )
         {
             //-merge-phrases-abbreviations-numbers-
             _PosTaggerPreMerging.Run( words );
@@ -120,7 +124,7 @@ namespace lingvo.postagger
             _PosTaggerMorphoAnalyzer.Run( words );
             #endif
 
-            _ProcessSentCallback( words );
+            _OuterProcessSentCallback_Delegate( words );
         }
 
         public List< word_t[] > Run_Debug( string text
@@ -131,7 +135,7 @@ namespace lingvo.postagger
         {
             var wordsBySents = new List< word_t[] >();
 
-            _Tokenizer.run( text, splitBySmiles, (words) =>
+            _Tokenizer.Run( text, splitBySmiles, (words) =>
             {
                 if ( mergeChains )
                 {

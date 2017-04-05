@@ -12,7 +12,7 @@ namespace lingvo.postagger
     /// <summary>
     /// 
     /// </summary>
-    public class MorphoAmbiguityResolverConfig
+    public sealed class MorphoAmbiguityResolverConfig
     {
         public MorphoAmbiguityResolverConfig()
         {
@@ -105,7 +105,7 @@ namespace lingvo.postagger
     /// <summary>
     /// 
     /// </summary>
-    public class MorphoAmbiguityResolverModel : IDisposable
+    public sealed class MorphoAmbiguityResolverModel : IDisposable
     {
         public MorphoAmbiguityResolverModel( MorphoAmbiguityResolverConfig config )
         {

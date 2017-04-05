@@ -1,8 +1,6 @@
-using System;
 using System.Collections.Generic;
 using System.Runtime;
 
-using lingvo.core;
 using lingvo.morphology;
 
 namespace lingvo.postagger
