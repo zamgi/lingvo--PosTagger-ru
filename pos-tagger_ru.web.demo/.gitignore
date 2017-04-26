@@ -8,4 +8,5 @@
 /bin/pos-tagger-crf.net.dll
 /bin/morphology.dll
 /obj/*
+/(logs)/*
 *.csproj.user
