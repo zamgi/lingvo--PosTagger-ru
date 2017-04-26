@@ -131,8 +131,6 @@ $(document).ready(function () {
         
     });
 
-    force_load_model();
-
     function shortView(responce, text) {
         var trs = [];
         for (var i = 0, len = responce.sents.length; i < len; i++) {
@@ -210,9 +208,10 @@ $(document).ready(function () {
 
     function processing_start(){
         $('#text').addClass('no-change').attr('readonly', 'readonly').attr('disabled', 'disabled');
-        $('.result-info').show().removeClass('error').text('Идет обработка...');
+        $('.result-info').show().removeClass('error').html('Идет обработка... <label id="processingTickLabel"></label>');
         $('#processButton').addClass('disabled');
         $('#processResult tbody').empty();
+        setTimeout(processing_tick, 1000);
     };
     function processing_end(){
         $('#text').removeClass('no-change').removeAttr('readonly').removeAttr('disabled');
@@ -225,11 +224,29 @@ $(document).ready(function () {
     function is_text_empty(text) {
         return (text.replace(/(^\s+)|(\s+$)/g, "") == "");
     };
-    function force_load_model() {
+    (function() {
         $.ajax({
             type: "POST",
             url: "RESTProcessHandler.ashx",
             data: { splitBySmiles: true, text: "_dummy_", html: false }
         });
+    })();
+
+    var processingTickCount = 1;
+    function processing_tick() {
+        var n2 = function (n) {
+            n = n.toString();
+            return ((n.length == 1) ? ('0' + n) : n);
+        }
+        var d = new Date(new Date(new Date(new Date().setHours(0)).setMinutes(0)).setSeconds(processingTickCount));
+        var t = n2(d.getHours()) + ':' + n2(d.getMinutes()) + ':' + n2(d.getSeconds()); //d.toLocaleTimeString();
+        var $s = $('#processingTickLabel');
+        if ($s.length) {
+            $s.text(t);
+            processingTickCount++;
+            setTimeout(processing_tick, 1000);
+        } else {
+            processingTickCount = 1;
+        }
     };
 });
