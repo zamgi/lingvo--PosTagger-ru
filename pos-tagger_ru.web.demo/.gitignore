@@ -5,8 +5,10 @@
 /bin/lingvo.core.dll
 /bin/Newtonsoft.Json.dll
 /bin/pos-tagger_ru.web.demo.dll
+/bin/pos-tagger_ru.web.demo.dll.config
 /bin/pos-tagger-crf.net.dll
 /bin/morphology.dll
+/bin/log4net.dll
 /obj/*
 /(logs)/*
 *.csproj.user

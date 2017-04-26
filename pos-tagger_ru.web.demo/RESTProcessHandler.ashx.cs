@@ -1,58 +1,18 @@
 ﻿using System;
 using System.Collections.Generic;
-using System.Configuration;
 using System.Linq;
 using System.Web;
 
 using lingvo.morphology;
-using lingvo.postagger;
 using lingvo.sentsplitting;
 using lingvo.tokenizing;
 using Newtonsoft.Json;
 using TreeDictionaryTypeEnum = lingvo.morphology.MorphoModelConfig.TreeDictionaryTypeEnum;
 
-namespace lingvo
-{
-    /// <summary>
-    /// 
-    /// </summary>
-    internal static class Config
-    {
-        public static readonly string URL_DETECTOR_RESOURCES_XML_FILENAME  = ConfigurationManager.AppSettings[ "URL_DETECTOR_RESOURCES_XML_FILENAME" ];
-        public static readonly string SENT_SPLITTER_RESOURCES_XML_FILENAME = ConfigurationManager.AppSettings[ "SENT_SPLITTER_RESOURCES_XML_FILENAME" ];
-        public static readonly string TOKENIZER_RESOURCES_XML_FILENAME     = ConfigurationManager.AppSettings[ "TOKENIZER_RESOURCES_XML_FILENAME" ];
-        public static readonly string POSTAGGER_MODEL_FILENAME             = ConfigurationManager.AppSettings[ "POSTAGGER_MODEL_FILENAME" ];
-        public static readonly string POSTAGGER_TEMPLATE_FILENAME          = ConfigurationManager.AppSettings[ "POSTAGGER_TEMPLATE_FILENAME" ];
-        public static readonly string POSTAGGER_RESOURCES_XML_FILENAME     = ConfigurationManager.AppSettings[ "POSTAGGER_RESOURCES_XML_FILENAME" ];
-
-        public static readonly string   MORPHO_BASE_DIRECTORY        = ConfigurationManager.AppSettings[ "MORPHO_BASE_DIRECTORY" ];
-        public static readonly string[] MORPHO_MORPHOTYPES_FILENAMES = ConfigurationManager.AppSettings[ "MORPHO_MORPHOTYPES_FILENAMES" ].ToFilesArray();
-        public static readonly string[] MORPHO_PROPERNAMES_FILENAMES = ConfigurationManager.AppSettings[ "MORPHO_PROPERNAMES_FILENAMES" ].ToFilesArray();
-        public static readonly string[] MORPHO_COMMON_FILENAMES      = ConfigurationManager.AppSettings[ "MORPHO_COMMON_FILENAMES"      ].ToFilesArray();
-        private static string[] ToFilesArray( this string value )
-        {
-            var array = value.Split( new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries )
-                             .Select( f => f.Trim() )
-                             .ToArray();
-            return (array);
-        }
-
-        public static readonly string MORPHO_AMBIGUITY_MODEL_FILENAME       = ConfigurationManager.AppSettings[ "MORPHO_AMBIGUITY_MODEL_FILENAME" ];
-        public static readonly string MORPHO_AMBIGUITY_TEMPLATE_FILENAME_5G = ConfigurationManager.AppSettings[ "MORPHO_AMBIGUITY_TEMPLATE_FILENAME_5G" ];
-        public static readonly string MORPHO_AMBIGUITY_TEMPLATE_FILENAME_3G = ConfigurationManager.AppSettings[ "MORPHO_AMBIGUITY_TEMPLATE_FILENAME_3G" ];
-
-        public static readonly int MAX_INPUTTEXT_LENGTH                = ConfigurationManager.AppSettings[ "MAX_INPUTTEXT_LENGTH"                ].ToInt32();
-        public static readonly int CONCURRENT_FACTORY_INSTANCE_COUNT   = ConfigurationManager.AppSettings[ "CONCURRENT_FACTORY_INSTANCE_COUNT"   ].ToInt32();
-        public static readonly int SAME_IP_INTERVAL_REQUEST_IN_SECONDS = ConfigurationManager.AppSettings[ "SAME_IP_INTERVAL_REQUEST_IN_SECONDS" ].ToInt32();
-        public static readonly int SAME_IP_MAX_REQUEST_IN_INTERVAL     = ConfigurationManager.AppSettings[ "SAME_IP_MAX_REQUEST_IN_INTERVAL"     ].ToInt32();        
-        public static readonly int SAME_IP_BANNED_INTERVAL_IN_SECONDS  = ConfigurationManager.AppSettings[ "SAME_IP_BANNED_INTERVAL_IN_SECONDS"  ].ToInt32();
-    }
-}
-
 namespace lingvo.postagger
 {
     /// <summary>
-    /// Summary description for RESTProcessHandler
+    /// 
     /// </summary>
     public sealed class RESTProcessHandler : IHttpHandler
     {
@@ -187,7 +147,7 @@ namespace lingvo.postagger
         /// <summary>
         /// 
         /// </summary>
-        private struct http_context_data
+        private static class ConcurrentFactoryHelper
         {
             private static readonly object _SyncLock = new object();
 
@@ -290,6 +250,14 @@ namespace lingvo.postagger
 
         public void ProcessRequest( HttpContext context )
         {
+            #region [.log.]
+            if ( Log.ProcessViewCommand( context ) )
+            {
+                return;
+            }
+            #endregion
+
+            var text = default(string);
             try
             {
                 #region [.anti-bot.]
@@ -301,19 +269,21 @@ namespace lingvo.postagger
                 }                
                 #endregion
 
-                var text          = context.GetRequestStringParam( "text", Config.MAX_INPUTTEXT_LENGTH );
-                var splitBySmiles = context.Request[ "splitBySmiles" ].Try2Boolean( true );                
+                    text          = context.GetRequestStringParam( "text", Config.MAX_INPUTTEXT_LENGTH );
+                var splitBySmiles = context.Request[ "splitBySmiles" ].Try2Bool( true );                
 
                 #region [.anti-bot.]
                 antiBot.MarkRequestEx( text );
                 #endregion
 
-                var words = http_context_data.GetConcurrentFactory().Run_Debug( text, splitBySmiles );
+                var words = ConcurrentFactoryHelper.GetConcurrentFactory().Run_Debug( text, splitBySmiles );
 
+                Log.Info( context, text );
                 SendJsonResponse( context, words );
             }
             catch ( Exception ex )
             {
+                Log.Error( context, text, ex );
                 SendJsonResponse( context, ex );
             }
         }
@@ -333,43 +303,6 @@ namespace lingvo.postagger
 
             var json = JsonConvert.SerializeObject( result );
             context.Response.Write( json );
-        }
-    }
-
-    /// <summary>
-    /// 
-    /// </summary>
-    internal static class Extensions
-    {
-        public static bool Try2Boolean( this string value, bool defaultValue )
-        {
-            if ( value != null )
-            {
-                var result = default(bool);
-                if ( bool.TryParse( value, out result ) )
-                    return (result);
-            }
-            return (defaultValue);
-        }
-
-        public static T ToEnum< T >( this string value ) where T : struct
-        {
-            var result = (T) Enum.Parse( typeof(T), value, true );
-            return (result);
-        }
-        public static int ToInt32( this string value )
-        {
-            return (int.Parse( value ));
-        }
-
-        public static string GetRequestStringParam( this HttpContext context, string paramName, int maxLength )
-        {
-            var value = context.Request[ paramName ];
-            if ( (value != null) && (maxLength < value.Length) && (0 < maxLength) )
-            {
-                return (value.Substring( 0, maxLength ));
-            }
-            return (value);
         }
     }
 }
