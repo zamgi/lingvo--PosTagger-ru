@@ -219,7 +219,7 @@ namespace lingvo.postagger
                             {                                
                                 var morphoAmbiguityModel = CreateMorphoAmbiguityResolverModel();
                                 var morphoModelConfig    = CreateMorphoModelConfig();
-                                var morphoModel          = MorphoModelFactory.Create( morphoModelConfig );                                
+                                var morphoModel          = MorphoModelFactory.Create( morphoModelConfig );
                                 var config               = CreatePosTaggerProcessorConfig();
 
                                 f = new ConcurrentFactory( config, morphoModel, morphoAmbiguityModel, Config.CONCURRENT_FACTORY_INSTANCE_COUNT );
