@@ -7,5 +7,4 @@
 /bin/pos-tagger_ru.console.demo.exe
 /bin/pos-tagger_ru.console.demo.exe.config
 /obj/*
-/(logs)/*
 *.csproj.user
