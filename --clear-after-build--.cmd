@@ -3,6 +3,8 @@ del "*.csproj.user" /S/Q/F/A
 del "pos-tagger_ru.web.demo\bin\*.pdb" /Q
 rd "pos-tagger_ru.web.demo\obj" /S/Q
 rd "pos-tagger_ru.web.demo\(logs)" /S/Q
+del "pos-tagger_ru.console.demo\bin\*.pdb" /Q
+rd "pos-tagger_ru.console.demo\obj" /S/Q
 rd "captcha\bin" /S/Q
 rd "captcha\obj" /S/Q
 rd "crfsuite.net\bin" /S/Q
