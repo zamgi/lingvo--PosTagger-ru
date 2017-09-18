@@ -70,7 +70,10 @@ $(document).ready(function () {
         }
     });
     $('#resetText2Default').click(function () {
-        $("#text").val(DEFAULT_TEXT).focus();
+        $("#text").val('');
+        setTimeout(function () {
+            $("#text").val(DEFAULT_TEXT).focus();
+        }, 100);        
     });
 
     $('#mainPageContent').on('click', '#processButton', function () {
