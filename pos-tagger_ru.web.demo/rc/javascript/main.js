@@ -11,7 +11,7 @@ $(document).ready(function () {
 '(Скоро в российскую столицу придет Новый Год.)\n' +
 '(На самом деле iPhone - это просто смартфон.)\n' +
 '\n' +
-'(пример частеричной омонимии:)\n' +
+'(пример частеречной омонимии:)\n' +
 'Вася, маша руками и коля дрова, морочил голову.\n' +
 'Вася, Маша и Коля пошли гулять.\n' + 
 '\n' +
@@ -19,12 +19,12 @@ $(document).ready(function () {
 'Варкалось. Хливкие шорьки пырялись по наве, и хрюкотали зелюки, как мюмзики в мове.';
 
     var textOnChange = function () {
-        var _len = $("#text").val().length; 
-        var len = _len.toString().replace(/\B(?=(\d{3})+(?!\d))/g, " ");
-        var $textLength = $("#textLength");
-        $textLength.html("длина текста: " + len + " символов");
-        if (MAX_INPUTTEXT_LENGTH < _len) $textLength.addClass("max-inputtext-length");
-        else                             $textLength.removeClass("max-inputtext-length");
+        var _len = $('#text').val().length; 
+        var len = _len.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ' ');
+        var $textLength = $('#textLength');
+        $textLength.html('длина текста: ' + len + ' символов');
+        if (MAX_INPUTTEXT_LENGTH < _len) $textLength.addClass('max-inputtext-length');
+        else                             $textLength.removeClass('max-inputtext-length');
     };
     var getText = function( $text ) {
         var text = trim_text( $text.val().toString() );
@@ -58,7 +58,7 @@ $(document).ready(function () {
         if (!text || !text.length) {
             text = DEFAULT_TEXT;
         }
-        $('#text').text(text).focus();
+        $('#text').val(text).focus();
     })();
 
     $('#detailedView').click(function () {
@@ -68,6 +68,9 @@ $(document).ready(function () {
         } else {
             $detailedView.parent().css({'color': 'gray', 'font-weight': 'normal'});
         }
+    });
+    $('#resetText2Default').click(function () {
+        $("#text").val(DEFAULT_TEXT).focus();
     });
 
     $('#mainPageContent').on('click', '#processButton', function () {
