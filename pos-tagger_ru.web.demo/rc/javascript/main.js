@@ -73,7 +73,7 @@ $(document).ready(function () {
         $("#text").val('');
         setTimeout(function () {
             $("#text").val(DEFAULT_TEXT).focus();
-        }, 100);        
+        }, 100);
     });
 
     $('#mainPageContent').on('click', '#processButton', function () {
