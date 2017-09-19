@@ -569,8 +569,8 @@ O	w[-1]|a[-1]|w[0]|a[0]=E|U|N|U	w[-1]|b[-1]|w[0]|b[0]=E|I:2|N|I:2	w[-1]|c[-1]|w[
         private MorphoAmbiguityTuple_t        _MatThreegram_0, _MatThreegram_1, _MatThreegram_2;
 
         #if DEBUG
-            private readonly StringBuilder _sb_attr_debug = new StringBuilder();
-            private readonly char[]        _chars_attr_debug = new char[ ATTRIBUTE_MAX_LENGTH * 10 ];
+            private readonly System.Text.StringBuilder _sb_attr_debug = new System.Text.StringBuilder();
+            private readonly char[] _chars_attr_debug = new char[ ATTRIBUTE_MAX_LENGTH * 10 ];
         #endif
         #endregion
 
@@ -1013,7 +1013,7 @@ O	w[-1]|a[-1]|w[0]|a[0]=E|U|N|U	w[-1]|b[-1]|w[0]|b[0]=E|I:2|N|I:2	w[-1]|c[-1]|w[
                 FillMat5CharsBufferWithZero( _AttributeBufferPtr, _MatThreegram_0 );
                 var f1 = default(float);
                 #region commented
-                /*var attr1 = Encoding.UTF8.GetString( _AttributeBuffer, 0, (int) (_AttributeBufferPtr - _AttributeBufferPtrBase) ); //new string( _AttributeBufferPtrBase );                
+                /*var attr1 = System.Text.Encoding.UTF8.GetString( _AttributeBuffer, 0, (int) (_AttributeBufferPtr - _AttributeBufferPtrBase) ); //new string( _AttributeBufferPtrBase );                
                 if ( _ModelDictionary.TryGetValue( attr1, out f1 ) )
                 {
                     if ( marginal.HasValue )
@@ -1060,7 +1060,7 @@ O	w[-1]|a[-1]|w[0]|a[0]=E|U|N|U	w[-1]|b[-1]|w[0]|b[0]=E|I:2|N|I:2	w[-1]|c[-1]|w[
                 FillMat5CharsBufferWithZero( _AttributeBufferPtr, _MatThreegram_2 );
                 var f2 = default(float);
                 #region commented
-                /*var attr2 = Encoding.UTF8.GetString( _AttributeBuffer, 0, (int) (_AttributeBufferPtr - _AttributeBufferPtrBase) ); //new string( _AttributeBufferPtrBase );                
+                /*var attr2 = System.Text.Encoding.UTF8.GetString( _AttributeBuffer, 0, (int) (_AttributeBufferPtr - _AttributeBufferPtrBase) ); //new string( _AttributeBufferPtrBase );                
                 if ( _ModelDictionary.TryGetValue( attr2, out f2 ) )
                 {
                     if ( marginal.HasValue )
@@ -1101,7 +1101,7 @@ O	w[-1]|a[-1]|w[0]|a[0]=E|U|N|U	w[-1]|b[-1]|w[0]|b[0]=E|I:2|N|I:2	w[-1]|c[-1]|w[
                 FillMat5CharsBufferWithZero( _AttributeBufferPtr, _MatThreegram_0 );
                 var f1 = default(float);
                 #region commented
-                /*var attr1 = Encoding.UTF8.GetString( _AttributeBuffer, 0, (int) (_AttributeBufferPtr - _AttributeBufferPtrBase) ); //new string( _AttributeBufferPtrBase );                
+                /*var attr1 = System.Text.Encoding.UTF8.GetString( _AttributeBuffer, 0, (int) (_AttributeBufferPtr - _AttributeBufferPtrBase) ); //new string( _AttributeBufferPtrBase );                
                 if ( _ModelDictionary.TryGetValue( attr1, out f1 ) )
                 {
                     if ( marginal.HasValue )
@@ -1139,7 +1139,7 @@ O	w[-1]|a[-1]|w[0]|a[0]=E|U|N|U	w[-1]|b[-1]|w[0]|b[0]=E|I:2|N|I:2	w[-1]|c[-1]|w[
                 FillMat5CharsBufferWithZero( _AttributeBufferPtr, _MatThreegram_2 );
                 var f2 = default(float);
                 #region commented
-                /*var attr2 = Encoding.UTF8.GetString( _AttributeBuffer, 0, (int) (_AttributeBufferPtr - _AttributeBufferPtrBase) ); //new string( _AttributeBufferPtrBase );                
+                /*var attr2 = System.Text.Encoding.UTF8.GetString( _AttributeBuffer, 0, (int) (_AttributeBufferPtr - _AttributeBufferPtrBase) ); //new string( _AttributeBufferPtrBase );                
                 if ( _ModelDictionary.TryGetValue( attr2, out f2 ) )
                 {
                     if ( marginal.HasValue )
@@ -1212,7 +1212,7 @@ O	w[-1]|a[-1]|w[0]|a[0]=E|U|N|U	w[-1]|b[-1]|w[0]|b[0]=E|I:2|N|I:2	w[-1]|c[-1]|w[
                 FillMat5CharsBufferWithZero( _AttributeBufferPtr, _MatThreegram_0 );
                 var f0 = default(float);
                 #region commented
-                /*var attr1 = Encoding.UTF8.GetString( _AttributeBuffer, 0, (int) (_AttributeBufferPtr - _AttributeBufferPtrBase) ); //new string( _AttributeBufferPtrBase );                
+                /*var attr1 = System.Text.Encoding.UTF8.GetString( _AttributeBuffer, 0, (int) (_AttributeBufferPtr - _AttributeBufferPtrBase) ); //new string( _AttributeBufferPtrBase );                
                 if ( _ModelDictionary.TryGetValue( attr1, out f1 ) )
                 {
                     if ( marginal.HasValue )
@@ -1230,7 +1230,7 @@ O	w[-1]|a[-1]|w[0]|a[0]=E|U|N|U	w[-1]|b[-1]|w[0]|b[0]=E|I:2|N|I:2	w[-1]|c[-1]|w[
                     var attr_len = (int) (_AttributeBufferPtr - _AttributeBufferPtrBase);                        
                     fixed ( char* chars_ptr = _chars_attr_debug )
                     {
-                        var chars_len = Encoding.UTF8.GetChars( _AttributeBufferPtrBase, attr_len, chars_ptr, _chars_attr_debug.Length );
+                        var chars_len = System.Text.Encoding.UTF8.GetChars( _AttributeBufferPtrBase, attr_len, chars_ptr, _chars_attr_debug.Length );
                         var s_debug = new string( chars_ptr, 0, chars_len );
                         _sb_attr_debug.Append( s_debug ).Append( '\t' );
                     }
@@ -1280,7 +1280,7 @@ O	w[-1]|a[-1]|w[0]|a[0]=E|U|N|U	w[-1]|b[-1]|w[0]|b[0]=E|I:2|N|I:2	w[-1]|c[-1]|w[
                 FillMat5CharsBufferWithZero( _AttributeBufferPtr, _MatThreegram_1 );
                 var f1 = default(float);
                 #region commented
-                /*var attr2 = Encoding.UTF8.GetString( _AttributeBuffer, 0, (int) (_AttributeBufferPtr - _AttributeBufferPtrBase) ); //new string( _AttributeBufferPtrBase );                
+                /*var attr2 = System.Text.Encoding.UTF8.GetString( _AttributeBuffer, 0, (int) (_AttributeBufferPtr - _AttributeBufferPtrBase) ); //new string( _AttributeBufferPtrBase );                
                 if ( _ModelDictionary.TryGetValue( attr2, out f2 ) )
                 {
                     if ( marginal.HasValue )
@@ -1298,7 +1298,7 @@ O	w[-1]|a[-1]|w[0]|a[0]=E|U|N|U	w[-1]|b[-1]|w[0]|b[0]=E|I:2|N|I:2	w[-1]|c[-1]|w[
                     var attr_len = (int) (_AttributeBufferPtr - _AttributeBufferPtrBase);
                     fixed ( char* chars_ptr = _chars_attr_debug )
                     {
-                        var chars_len = Encoding.UTF8.GetChars( _AttributeBufferPtrBase, attr_len, chars_ptr, _chars_attr_debug.Length );
+                        var chars_len = System.Text.Encoding.UTF8.GetChars( _AttributeBufferPtrBase, attr_len, chars_ptr, _chars_attr_debug.Length );
                         var s_debug = new string( chars_ptr, 0, chars_len );
                         _sb_attr_debug.Append( s_debug ).Append( '\t' );
                     }
@@ -1348,7 +1348,7 @@ O	w[-1]|a[-1]|w[0]|a[0]=E|U|N|U	w[-1]|b[-1]|w[0]|b[0]=E|I:2|N|I:2	w[-1]|c[-1]|w[
                 FillMat5CharsBufferWithZero( _AttributeBufferPtr, _MatThreegram_2 );
                 var f2 = default(float);
                 #region commented
-                /*var attr3 = Encoding.UTF8.GetString( _AttributeBuffer, 0, (int) (_AttributeBufferPtr - _AttributeBufferPtrBase) ); //new string( _AttributeBufferPtrBase );                
+                /*var attr3 = System.Text.Encoding.UTF8.GetString( _AttributeBuffer, 0, (int) (_AttributeBufferPtr - _AttributeBufferPtrBase) ); //new string( _AttributeBufferPtrBase );                
                 if ( _ModelDictionary.TryGetValue( attr3, out f3 ) )
                 {
                     if ( marginal.HasValue )
@@ -1366,7 +1366,7 @@ O	w[-1]|a[-1]|w[0]|a[0]=E|U|N|U	w[-1]|b[-1]|w[0]|b[0]=E|I:2|N|I:2	w[-1]|c[-1]|w[
                     var attr_len = (int) (_AttributeBufferPtr - _AttributeBufferPtrBase);
                     fixed ( char* chars_ptr = _chars_attr_debug )
                     {
-                        var chars_len = Encoding.UTF8.GetChars( _AttributeBufferPtrBase, attr_len, chars_ptr, _chars_attr_debug.Length );
+                        var chars_len = System.Text.Encoding.UTF8.GetChars( _AttributeBufferPtrBase, attr_len, chars_ptr, _chars_attr_debug.Length );
                         var s_debug = new string( chars_ptr, 0, chars_len );
                         _sb_attr_debug.Append( s_debug ).Append( '\t' );
                     }
@@ -1556,8 +1556,8 @@ O	w[-1]|a[-1]|w[0]|a[0]=E|U|N|U	w[-1]|b[-1]|w[0]|b[0]=E|I:2|N|I:2	w[-1]|c[-1]|w[
         private MorphoAmbiguityTuple_t        _Mat_0, _Mat_1, _Mat_2, _Mat_3, _Mat_4;
 
         #if DEBUG
-            private readonly StringBuilder _sb_attr_debug = new StringBuilder();
-            private readonly char[]        _chars_attr_debug = new char[ ATTRIBUTE_MAX_LENGTH * 10 ];
+            private readonly System.Text.StringBuilder _sb_attr_debug = new System.Text.StringBuilder();
+            private readonly char[] _chars_attr_debug = new char[ ATTRIBUTE_MAX_LENGTH * 10 ];
         #endif
         #endregion
 
@@ -1867,7 +1867,7 @@ O	w[-1]|a[-1]|w[0]|a[0]=E|U|N|U	w[-1]|b[-1]|w[0]|b[0]=E|I:2|N|I:2	w[-1]|c[-1]|w[
                     var attr_len = (int) (_AttributeBufferPtr - _AttributeBufferPtrBase);                        
                     fixed ( char* chars_ptr = _chars_attr_debug )
                     {
-                        var chars_len = Encoding.UTF8.GetChars( _AttributeBufferPtrBase, attr_len, chars_ptr, _chars_attr_debug.Length );
+                        var chars_len = System.Text.Encoding.UTF8.GetChars( _AttributeBufferPtrBase, attr_len, chars_ptr, _chars_attr_debug.Length );
                         var s_debug = new string( chars_ptr, 0, chars_len );
                         _sb_attr_debug.Append( s_debug ).Append( '\t' );
                     }
@@ -2076,7 +2076,7 @@ O	w[-1]|a[-1]|w[0]|a[0]=E|U|N|U	w[-1]|b[-1]|w[0]|b[0]=E|I:2|N|I:2	w[-1]|c[-1]|w[
                     var attr_len = (int) (_AttributeBufferPtr - _AttributeBufferPtrBase);
                     fixed ( char* chars_ptr = _chars_attr_debug )
                     {
-                        var chars_len = Encoding.UTF8.GetChars( _AttributeBufferPtrBase, attr_len, chars_ptr, _chars_attr_debug.Length );
+                        var chars_len = System.Text.Encoding.UTF8.GetChars( _AttributeBufferPtrBase, attr_len, chars_ptr, _chars_attr_debug.Length );
                         var s_debug = new string( chars_ptr, 0, chars_len );
                         _sb_attr_debug.Append( s_debug ).Append( '\t' );
                     }
@@ -2134,7 +2134,7 @@ O	w[-1]|a[-1]|w[0]|a[0]=E|U|N|U	w[-1]|b[-1]|w[0]|b[0]=E|I:2|N|I:2	w[-1]|c[-1]|w[
                     var attr_len = (int) (_AttributeBufferPtr - _AttributeBufferPtrBase);
                     fixed ( char* chars_ptr = _chars_attr_debug )
                     {
-                        var chars_len = Encoding.UTF8.GetChars( _AttributeBufferPtrBase, attr_len, chars_ptr, _chars_attr_debug.Length );
+                        var chars_len = System.Text.Encoding.UTF8.GetChars( _AttributeBufferPtrBase, attr_len, chars_ptr, _chars_attr_debug.Length );
                         var s_debug = new string( chars_ptr, 0, chars_len );
                         _sb_attr_debug.Append( s_debug ).Append( '\t' );
                     }
@@ -2415,7 +2415,7 @@ O	w[-1]|a[-1]|w[0]|a[0]=E|U|N|U	w[-1]|b[-1]|w[0]|b[0]=E|I:2|N|I:2	w[-1]|c[-1]|w[
                     var attr_len = (int) (_AttributeBufferPtr - _AttributeBufferPtrBase);                        
                     fixed ( char* chars_ptr = _chars_attr_debug )
                     {
-                        var chars_len = Encoding.UTF8.GetChars( _AttributeBufferPtrBase, attr_len, chars_ptr, _chars_attr_debug.Length );
+                        var chars_len = System.Text.Encoding.UTF8.GetChars( _AttributeBufferPtrBase, attr_len, chars_ptr, _chars_attr_debug.Length );
                         var s_debug = new string( chars_ptr, 0, chars_len );
                         _sb_attr_debug.Append( s_debug ).Append( '\t' );
                     }
@@ -2475,7 +2475,7 @@ O	w[-1]|a[-1]|w[0]|a[0]=E|U|N|U	w[-1]|b[-1]|w[0]|b[0]=E|I:2|N|I:2	w[-1]|c[-1]|w[
                     var attr_len = (int) (_AttributeBufferPtr - _AttributeBufferPtrBase);
                     fixed ( char* chars_ptr = _chars_attr_debug )
                     {
-                        var chars_len = Encoding.UTF8.GetChars( _AttributeBufferPtrBase, attr_len, chars_ptr, _chars_attr_debug.Length );
+                        var chars_len = System.Text.Encoding.UTF8.GetChars( _AttributeBufferPtrBase, attr_len, chars_ptr, _chars_attr_debug.Length );
                         var s_debug = new string( chars_ptr, 0, chars_len );
                         _sb_attr_debug.Append( s_debug ).Append( '\t' );
                     }
@@ -2860,7 +2860,7 @@ O	w[-1]|a[-1]|w[0]|a[0]=E|U|N|U	w[-1]|b[-1]|w[0]|b[0]=E|I:2|N|I:2	w[-1]|c[-1]|w[
                     var attr_len = (int) (_AttributeBufferPtr - _AttributeBufferPtrBase);                        
                     fixed ( char* chars_ptr = _chars_attr_debug )
                     {
-                        var chars_len = Encoding.UTF8.GetChars( _AttributeBufferPtrBase, attr_len, chars_ptr, _chars_attr_debug.Length );
+                        var chars_len = System.Text.Encoding.UTF8.GetChars( _AttributeBufferPtrBase, attr_len, chars_ptr, _chars_attr_debug.Length );
                         var s_debug = new string( chars_ptr, 0, chars_len );
                         _sb_attr_debug.Append( s_debug ).Append( '\t' );
                     }
@@ -2920,7 +2920,7 @@ O	w[-1]|a[-1]|w[0]|a[0]=E|U|N|U	w[-1]|b[-1]|w[0]|b[0]=E|I:2|N|I:2	w[-1]|c[-1]|w[
                     var attr_len = (int) (_AttributeBufferPtr - _AttributeBufferPtrBase);                        
                     fixed ( char* chars_ptr = _chars_attr_debug )
                     {
-                        var chars_len = Encoding.UTF8.GetChars( _AttributeBufferPtrBase, attr_len, chars_ptr, _chars_attr_debug.Length );
+                        var chars_len = System.Text.Encoding.UTF8.GetChars( _AttributeBufferPtrBase, attr_len, chars_ptr, _chars_attr_debug.Length );
                         var s_debug = new string( chars_ptr, 0, chars_len );
                         _sb_attr_debug.Append( s_debug ).Append( '\t' );
                     }
@@ -2980,7 +2980,7 @@ O	w[-1]|a[-1]|w[0]|a[0]=E|U|N|U	w[-1]|b[-1]|w[0]|b[0]=E|I:2|N|I:2	w[-1]|c[-1]|w[
                     var attr_len = (int) (_AttributeBufferPtr - _AttributeBufferPtrBase);                        
                     fixed ( char* chars_ptr = _chars_attr_debug )
                     {
-                        var chars_len = Encoding.UTF8.GetChars( _AttributeBufferPtrBase, attr_len, chars_ptr, _chars_attr_debug.Length );
+                        var chars_len = System.Text.Encoding.UTF8.GetChars( _AttributeBufferPtrBase, attr_len, chars_ptr, _chars_attr_debug.Length );
                         var s_debug = new string( chars_ptr, 0, chars_len );
                         _sb_attr_debug.Append( s_debug ).Append( '\t' );
                     }
@@ -3517,7 +3517,7 @@ O	w[-1]|a[-1]|w[0]|a[0]=E|U|N|U	w[-1]|b[-1]|w[0]|b[0]=E|I:2|N|I:2	w[-1]|c[-1]|w[
                     var attr_len = (int) (_AttributeBufferPtr - _AttributeBufferPtrBase);                        
                     fixed ( char* chars_ptr = _chars_attr_debug )
                     {
-                        var chars_len = Encoding.UTF8.GetChars( _AttributeBufferPtrBase, attr_len, chars_ptr, _chars_attr_debug.Length );
+                        var chars_len = System.Text.Encoding.UTF8.GetChars( _AttributeBufferPtrBase, attr_len, chars_ptr, _chars_attr_debug.Length );
                         var s_debug = new string( chars_ptr, 0, chars_len );
                         _sb_attr_debug.Append( s_debug ).Append( '\t' );
                     }
@@ -3577,7 +3577,7 @@ O	w[-1]|a[-1]|w[0]|a[0]=E|U|N|U	w[-1]|b[-1]|w[0]|b[0]=E|I:2|N|I:2	w[-1]|c[-1]|w[
                     var attr_len = (int) (_AttributeBufferPtr - _AttributeBufferPtrBase);                        
                     fixed ( char* chars_ptr = _chars_attr_debug )
                     {
-                        var chars_len = Encoding.UTF8.GetChars( _AttributeBufferPtrBase, attr_len, chars_ptr, _chars_attr_debug.Length );
+                        var chars_len = System.Text.Encoding.UTF8.GetChars( _AttributeBufferPtrBase, attr_len, chars_ptr, _chars_attr_debug.Length );
                         var s_debug = new string( chars_ptr, 0, chars_len );
                         _sb_attr_debug.Append( s_debug ).Append( '\t' );
                     }
@@ -3637,7 +3637,7 @@ O	w[-1]|a[-1]|w[0]|a[0]=E|U|N|U	w[-1]|b[-1]|w[0]|b[0]=E|I:2|N|I:2	w[-1]|c[-1]|w[
                     var attr_len = (int) (_AttributeBufferPtr - _AttributeBufferPtrBase);                        
                     fixed ( char* chars_ptr = _chars_attr_debug )
                     {
-                        var chars_len = Encoding.UTF8.GetChars( _AttributeBufferPtrBase, attr_len, chars_ptr, _chars_attr_debug.Length );
+                        var chars_len = System.Text.Encoding.UTF8.GetChars( _AttributeBufferPtrBase, attr_len, chars_ptr, _chars_attr_debug.Length );
                         var s_debug = new string( chars_ptr, 0, chars_len );
                         _sb_attr_debug.Append( s_debug ).Append( '\t' );
                     }
@@ -3697,7 +3697,7 @@ O	w[-1]|a[-1]|w[0]|a[0]=E|U|N|U	w[-1]|b[-1]|w[0]|b[0]=E|I:2|N|I:2	w[-1]|c[-1]|w[
                     var attr_len = (int) (_AttributeBufferPtr - _AttributeBufferPtrBase);                        
                     fixed ( char* chars_ptr = _chars_attr_debug )
                     {
-                        var chars_len = Encoding.UTF8.GetChars( _AttributeBufferPtrBase, attr_len, chars_ptr, _chars_attr_debug.Length );
+                        var chars_len = System.Text.Encoding.UTF8.GetChars( _AttributeBufferPtrBase, attr_len, chars_ptr, _chars_attr_debug.Length );
                         var s_debug = new string( chars_ptr, 0, chars_len );
                         _sb_attr_debug.Append( s_debug ).Append( '\t' );
                     }
