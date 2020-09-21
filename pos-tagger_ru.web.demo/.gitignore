@@ -1,14 +1,4 @@
-/bin/*.pdb
-/bin/captcha.dll
-/bin/crfsuite.net.dll
-/bin/SentSplitter.dll
-/bin/lingvo.core.dll
-/bin/Newtonsoft.Json.dll
-/bin/pos-tagger_ru.web.demo.dll
-/bin/pos-tagger_ru.web.demo.dll.config
-/bin/pos-tagger-crf.net.dll
-/bin/morphology.dll
-/bin/log4net.dll
+/bin/*
 /obj/*
 /(logs)/*
 *.csproj.user
