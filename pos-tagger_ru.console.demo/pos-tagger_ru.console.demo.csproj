@@ -48,7 +48,6 @@
     <None Include="App.config">
       <SubType>Designer</SubType>
     </None>
-    <None Include="bin\libcrfsuite.so" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\crfsuite.net\crfsuite.net.csproj">
@@ -72,14 +71,12 @@
       <Name>SentSplitter</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Content Include="bin\crfsuite_x64.dll" />
-    <Content Include="bin\crfsuite_x86.dll" />
-  </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>
-    </PostBuildEvent>
+    <PostBuildEvent>echo ------------ copy native crfsuite_.dll ------------
+copy "..\..\[lib]\crfsuite_x64.dll" "$(ProjectDir)\bin"
+copy "..\..\[lib]\crfsuite_x86.dll" "$(ProjectDir)\bin"
+copy "..\..\[lib]\libcrfsuite.so" "$(ProjectDir)\bin"</PostBuildEvent>
   </PropertyGroup>
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
