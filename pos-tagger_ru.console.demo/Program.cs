@@ -2,12 +2,12 @@
 using System.Collections.Generic;
 using System.Configuration;
 using System.Diagnostics;
-using System.IO;
 using System.Linq;
-using System.Threading;
+using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 
-using lingvo.sentsplitting;
 using lingvo.morphology;
+using lingvo.sentsplitting;
 using lingvo.tokenizing;
 using TreeDictionaryTypeEnum = lingvo.morphology.MorphoModelConfig.TreeDictionaryTypeEnum;
 
@@ -29,13 +29,7 @@ namespace lingvo
         public static readonly string[] MORPHO_MORPHOTYPES_FILENAMES = ConfigurationManager.AppSettings[ "MORPHO_MORPHOTYPES_FILENAMES" ].ToFilesArray();
         public static readonly string[] MORPHO_PROPERNAMES_FILENAMES = ConfigurationManager.AppSettings[ "MORPHO_PROPERNAMES_FILENAMES" ].ToFilesArray();
         public static readonly string[] MORPHO_COMMON_FILENAMES      = ConfigurationManager.AppSettings[ "MORPHO_COMMON_FILENAMES"      ].ToFilesArray();
-        private static string[] ToFilesArray( this string value )
-        {
-            var array = value.Split( new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries )
-                             .Select( f => f.Trim() )
-                             .ToArray();
-            return (array);
-        }
+        private static string[] ToFilesArray( this string value ) => value.Split( new[] { ',', ';' }, StringSplitOptions.RemoveEmptyEntries ).Select( f => f.Trim() ).ToArray();
 
         public static readonly string MORPHO_AMBIGUITY_MODEL_FILENAME       = ConfigurationManager.AppSettings[ "MORPHO_AMBIGUITY_MODEL_FILENAME" ];
         public static readonly string MORPHO_AMBIGUITY_TEMPLATE_FILENAME_5G = ConfigurationManager.AppSettings[ "MORPHO_AMBIGUITY_TEMPLATE_FILENAME_5G" ];
@@ -48,15 +42,15 @@ namespace lingvo.postagger
     /// <summary>
     /// 
     /// </summary>
-    internal sealed class Program
+    internal static class Program
     {
-        private static void Main( string[] args )
+        private static async Task Main( string[] args )
         {
             try
             {
                 var text = @"Сергей Собянин напомнил, что в 2011 году в Москве были 143 млрд. руб. приняты масштабные программы развития города, в том числе программа ""Безопасный город"" на пять лет, на которую будет выделено финансирование в размере 143 млрд. рублей.";
 
-                ProcessText( text );
+                await ProcessText( text ).CAX();
 
                 //---ProcessText_without_Morphology( text );
             }
@@ -77,9 +71,7 @@ namespace lingvo.postagger
         /// </summary>
         private sealed class PosTaggerEnvironment : IDisposable
         {
-            private PosTaggerEnvironment()
-            {
-            }
+            private PosTaggerEnvironment() { }
             public void Dispose()
             {
                 if ( Processor != null )
@@ -99,54 +91,39 @@ namespace lingvo.postagger
                     MorphoAmbiguityResolverModel.Dispose();
                     MorphoAmbiguityResolverModel = null;
                 }
+
+                if ( SentSplitterConfig != null )
+                {
+                    SentSplitterConfig.Dispose();
+                    SentSplitterConfig = null;
+                }
             }
 
-            private MorphoAmbiguityResolverModel MorphoAmbiguityResolverModel
-            {
-                get;
-                set;
-            }
-            private IMorphoModel MorphoModel
-            {
-                get;
-                set;
-            }
-            public PosTaggerProcessor Processor
-            {
-                get;
-                private set;
-            }
+            private MorphoAmbiguityResolverModel MorphoAmbiguityResolverModel { get; set; }
+            private IMorphoModel MorphoModel { get; set; }
+            private SentSplitterConfig SentSplitterConfig { get; set; }
+            public PosTaggerProcessor Processor { get; private set; }
 
 
-            public static PosTaggerProcessorConfig      CreatePosTaggerProcessorConfig()
+            public static (PosTaggerProcessorConfig config, SentSplitterConfig sentSplitterConfig) CreatePosTaggerProcessorConfig()
             {
-                var sentSplitterConfig = new SentSplitterConfig( Config.SENT_SPLITTER_RESOURCES_XML_FILENAME,
-                                                                 Config.URL_DETECTOR_RESOURCES_XML_FILENAME );
-                var config = new PosTaggerProcessorConfig( Config.TOKENIZER_RESOURCES_XML_FILENAME,
-                                                           Config.POSTAGGER_RESOURCES_XML_FILENAME,
-                                                           LanguageTypeEnum.Ru,
-                                                           sentSplitterConfig )
+                var sentSplitterConfig = new SentSplitterConfig( Config.SENT_SPLITTER_RESOURCES_XML_FILENAME, Config.URL_DETECTOR_RESOURCES_XML_FILENAME );
+                var config = new PosTaggerProcessorConfig( Config.TOKENIZER_RESOURCES_XML_FILENAME, Config.POSTAGGER_RESOURCES_XML_FILENAME, LanguageTypeEnum.Ru, sentSplitterConfig )
                 {
                     ModelFilename    = Config.POSTAGGER_MODEL_FILENAME,
                     TemplateFilename = Config.POSTAGGER_TEMPLATE_FILENAME,
                 };
-
-                return (config);
+                return (config, sentSplitterConfig);
             }            
-            private static MorphoModelConfig            CreateMorphoModelConfig()
+            private static MorphoModelConfig CreateMorphoModelConfig() => new MorphoModelConfig()
             {
-                var config = new MorphoModelConfig()
-                {
-                    TreeDictionaryType   = TreeDictionaryTypeEnum.Native,
-                    BaseDirectory        = Config.MORPHO_BASE_DIRECTORY,
-                    MorphoTypesFilenames = Config.MORPHO_MORPHOTYPES_FILENAMES,
-                    ProperNamesFilenames = Config.MORPHO_PROPERNAMES_FILENAMES,
-                    CommonFilenames      = Config.MORPHO_COMMON_FILENAMES,
-                    ModelLoadingErrorCallback = (s1, s2) => { }
-                };
-
-                return (config);
-            }
+                TreeDictionaryType   = TreeDictionaryTypeEnum.Native,
+                BaseDirectory        = Config.MORPHO_BASE_DIRECTORY,
+                MorphoTypesFilenames = Config.MORPHO_MORPHOTYPES_FILENAMES,
+                ProperNamesFilenames = Config.MORPHO_PROPERNAMES_FILENAMES,
+                CommonFilenames      = Config.MORPHO_COMMON_FILENAMES,
+                ModelLoadingErrorCallback = (s1, s2) => { }
+            };
             private static MorphoAmbiguityResolverModel CreateMorphoAmbiguityResolverModel()
             {
                 var config = new MorphoAmbiguityResolverConfig()
@@ -155,32 +132,63 @@ namespace lingvo.postagger
                     TemplateFilename_5g = Config.MORPHO_AMBIGUITY_TEMPLATE_FILENAME_5G,
                     TemplateFilename_3g = Config.MORPHO_AMBIGUITY_TEMPLATE_FILENAME_3G,
                 };
-
                 var model = new MorphoAmbiguityResolverModel( config );
                 return (model);
             }
             public static PosTaggerEnvironment Create()
             {
+                var sw = Stopwatch.StartNew();
                 var morphoAmbiguityModel = CreateMorphoAmbiguityResolverModel();
                 var morphoModelConfig    = CreateMorphoModelConfig();
                 var morphoModel          = MorphoModelFactory.Create( morphoModelConfig );
-                var config               = CreatePosTaggerProcessorConfig();
+                var (config, ssc)        = CreatePosTaggerProcessorConfig();
 
                 var posTaggerProcessor = new PosTaggerProcessor( config, morphoModel, morphoAmbiguityModel );
 
-                var x = new PosTaggerEnvironment()
+                var posEnv = new PosTaggerEnvironment()
                 {
                     MorphoAmbiguityResolverModel = morphoAmbiguityModel,
                     MorphoModel                  = morphoModel,
+                    SentSplitterConfig           = ssc,
                     Processor                    = posTaggerProcessor,
                 };
-                return (x);
+                sw.Stop(); Console.WriteLine( $"load models elapsed: {sw.Elapsed}" );
+                return (posEnv);
+            }
+            public static async Task< PosTaggerEnvironment > CreateAsync()
+            {
+                var sw = Stopwatch.StartNew();
+
+                var morphoModelConfig    = CreateMorphoModelConfig();
+                var morphoAmbiguityModel_task = Task.Run( () => CreateMorphoAmbiguityResolverModel() );                
+                var morphoModel_task          = Task.Run( () => MorphoModelFactory.Create( morphoModelConfig ) );
+                var config_task               = Task.Run( () => CreatePosTaggerProcessorConfig() );
+
+                await Task.WhenAll( morphoAmbiguityModel_task, morphoModel_task, config_task ).CAX();
+
+                var morphoAmbiguityModel = morphoAmbiguityModel_task.Result;
+                var morphoModel          = morphoModel_task.Result;
+                var (config, ssc)        = config_task.Result;
+
+                var posTaggerProcessor = new PosTaggerProcessor( config, morphoModel, morphoAmbiguityModel );
+
+                var posEnv = new PosTaggerEnvironment()
+                {
+                    MorphoAmbiguityResolverModel = morphoAmbiguityModel,
+                    MorphoModel                  = morphoModel,
+                    SentSplitterConfig           = ssc,
+                    Processor                    = posTaggerProcessor,
+                };
+
+                sw.Stop(); Console.WriteLine( $"load models elapsed: {sw.Elapsed}" );
+
+                return (posEnv);
             }
         }
 
-        private static void ProcessText( string text )
+        private static async Task ProcessText( string text )
         {
-            using ( var posTagger = PosTaggerEnvironment.Create() )
+            using ( var posTagger = await PosTaggerEnvironment.CreateAsync().CAX() )
             {
                 Console.WriteLine( "\r\n-------------------------------------------------\r\n text: '" + text + '\'' );
 
@@ -193,10 +201,10 @@ namespace lingvo.postagger
                 }
                 Console.WriteLine();
 
-                var result_debug = posTagger.Processor.Run_Debug( text, true, true, true, true );
+                var result_details = posTagger.Processor.Run_Details( text, true, true, true, true );
 
-                Console.WriteLine( "-------------------------------------------------\r\n pos-tagger-entity-count: " + result_debug.Count + Environment.NewLine );
-                foreach ( var r in result_debug )
+                Console.WriteLine( "-------------------------------------------------\r\n pos-tagger-entity-count: " + result_details.Count + Environment.NewLine );
+                foreach ( var r in result_details )
                 {
                     foreach ( var word in r )
                     {
@@ -211,8 +219,9 @@ namespace lingvo.postagger
         //=============== Only PoS-Tagger (without Morphology) ===============//
         private static void ProcessText_without_Morphology( string text )
         {
-            var config = PosTaggerEnvironment.CreatePosTaggerProcessorConfig();
+            var (config, ssc) = PosTaggerEnvironment.CreatePosTaggerProcessorConfig();
 
+            using ( ssc )
             using ( var tokenizer = new Tokenizer( config.TokenizerConfig ) )
             using ( var posTaggerScriber = PosTaggerScriber.Create( config.ModelFilename, config.TemplateFilename ) )
             {
@@ -236,22 +245,10 @@ namespace lingvo.postagger
                     Console.WriteLine( w );
                 }
                 Console.WriteLine();
-
-                posTaggerPreMerging = null;
-                result              = null;
             }
         }
-    }
 
-    /// <summary>
-    /// 
-    /// </summary>
-    internal static class Ext
-    {
-        public static T ToEnum< T >( this string value ) where T : struct
-        {
-            var e = (T) Enum.Parse( typeof( T ), value, true );
-            return (e);
-        }
+        private static ConfiguredTaskAwaitable< T > CAX< T >( this Task< T > t ) => t.ConfigureAwait( false );
+        private static ConfiguredTaskAwaitable CAX( this Task t ) => t.ConfigureAwait( false );
     }
 }

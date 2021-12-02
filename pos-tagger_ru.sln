@@ -17,7 +17,7 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "lingvo.core", "lingvo.core\
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "crfsuite.net", "crfsuite.net\crfsuite.net.csproj", "{0E34915B-130F-40F4-B0BC-F543ABE52CEF}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SentSplitter", "SentSplitter\SentSplitter.csproj", "{945A3CAA-EF28-4344-8DBB-7EBEB4BE0301}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "sent-splitting", "sent-splitting\sent-splitting.csproj", "{945A3CAA-EF28-4344-8DBB-7EBEB4BE0301}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "pos-tagger-crf.NET", "pos-tagger-crf.net\pos-tagger-crf.NET.csproj", "{97B9B41C-DABF-4D93-B111-85B8D86ACBA6}"
 EndProject

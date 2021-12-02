@@ -25,10 +25,8 @@ namespace lingvo.postagger
         #endregion
 
         #region [.ctor().]
-        public PosTaggerProcessor( PosTaggerProcessorConfig     config, 
-                                   IMorphoModel                 morphoModel,
-                                   MorphoAmbiguityResolverModel morphoAmbiguityModel )
-		{
+        public PosTaggerProcessor( PosTaggerProcessorConfig config, IMorphoModel morphoModel, MorphoAmbiguityResolverModel morphoAmbiguityModel )
+        {
             CheckConfig( config, morphoModel, morphoAmbiguityModel );
 						
             _Tokenizer               = new Tokenizer( config.TokenizerConfig );
@@ -39,7 +37,6 @@ namespace lingvo.postagger
             _ProcessSentCallback_1_Delegate = new Tokenizer.ProcessSentCallbackDelegate( ProcessSentCallback_1 );
             _ProcessSentCallback_2_Delegate = new Tokenizer.ProcessSentCallbackDelegate( ProcessSentCallback_2 );
         }
-
         public void Dispose()
         {
             _Tokenizer              .Dispose();
@@ -127,7 +124,7 @@ namespace lingvo.postagger
             _OuterProcessSentCallback_Delegate( words );
         }
 
-        public List< word_t[] > Run_Debug( string text
+        public List< word_t[] > Run_Details( string text
             , bool splitBySmiles
             , bool mergeChains
             , bool processMorphology
