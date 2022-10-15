@@ -10,8 +10,7 @@ using Microsoft.Extensions.Logging;
 using Microsoft.Extensions.Logging.EventLog;
 
 using captcha;
-using lingvo.morphology;
-using lingvo.sentsplitting;
+using lingvo.tokenizing;
 
 namespace lingvo.postagger.webService
 {
@@ -22,106 +21,6 @@ namespace lingvo.postagger.webService
     {
         public const string SERVICE_NAME = "pos-tagger_ru.webService";
 
-        /// <summary>
-        /// 
-        /// </summary>
-        private sealed class environment : IDisposable
-        {
-            private environment() { }
-            public void Dispose()
-            {
-                if ( MorphoModel != null )
-                {
-                    MorphoModel.Dispose();
-                    MorphoModel = null;
-                }
-
-                if ( MorphoAmbiguityResolverModel != null )
-                {
-                    MorphoAmbiguityResolverModel.Dispose();
-                    MorphoAmbiguityResolverModel = null;
-                }
-
-                if ( SentSplitterConfig != null )
-                {
-                    SentSplitterConfig.Dispose();
-                    SentSplitterConfig = null;
-                }
-            }
-
-            public  PosTaggerProcessorConfig     PosTaggerProcessorConfig     { get; private set; }
-            public  MorphoAmbiguityResolverModel MorphoAmbiguityResolverModel { get; private set; }
-            public  IMorphoModel                 MorphoModel                  { get; private set; }
-            private SentSplitterConfig           SentSplitterConfig           { get; set; }
-
-            public static environment Create( Config opts, bool print2Console = true )
-            {
-                var sw = default(Stopwatch);
-                if ( print2Console )
-                {
-                    sw = Stopwatch.StartNew();
-                    Console.Write( "init postagger-environment..." );
-                }
-
-                var morphoAmbiguityModel      = opts.CreateMorphoAmbiguityResolverModel();
-                var morphoModelConfig         = opts.CreateMorphoModelConfig();
-                var morphoModel               = MorphoModelFactory.Create( morphoModelConfig );
-                var (posTaggerProcessor, ssc) = opts.CreatePosTaggerProcessorConfig();
-
-                var posEnv = new environment()
-                {
-                    MorphoAmbiguityResolverModel = morphoAmbiguityModel,
-                    MorphoModel                  = morphoModel,
-                    SentSplitterConfig           = ssc,
-                    PosTaggerProcessorConfig     = posTaggerProcessor,
-                };
-
-                if ( print2Console )
-                {
-                    sw.Stop();
-                    Console.WriteLine( $"end, (elapsed: {sw.Elapsed}).\r\n----------------------------------------------------\r\n" );
-                }
-
-                return (posEnv);
-            }
-            public static async Task< environment > CreateAsync( Config opts, bool print2Console = true )
-            {
-                var sw = default(Stopwatch);
-                if ( print2Console )
-                {
-                    sw = Stopwatch.StartNew();
-                    Console.Write( "init postagger-environment..." );
-                }
-
-                var morphoModelConfig         = opts.CreateMorphoModelConfig();
-                var morphoAmbiguityModel_task = Task.Run( () => opts.CreateMorphoAmbiguityResolverModel() );                
-                var morphoModel_task          = Task.Run( () => MorphoModelFactory.Create( morphoModelConfig ) );
-                var config_task               = Task.Run( () => opts.CreatePosTaggerProcessorConfig() );
-
-                await Task.WhenAll( morphoAmbiguityModel_task, morphoModel_task, config_task ).CAX();
-
-                var morphoAmbiguityModel      = morphoAmbiguityModel_task.Result;
-                var morphoModel               = morphoModel_task.Result;
-                var (posTaggerProcessor, ssc) = config_task.Result;
-
-                var posEnv = new environment()
-                {
-                    MorphoAmbiguityResolverModel = morphoAmbiguityModel,
-                    MorphoModel                  = morphoModel,
-                    SentSplitterConfig           = ssc,
-                    PosTaggerProcessorConfig     = posTaggerProcessor,
-                };
-
-                if ( print2Console )
-                {
-                    sw.Stop();
-                    Console.WriteLine( $"end, (elapsed: {sw.Elapsed}).\r\n----------------------------------------------------\r\n" );
-                }
-
-                return (posEnv);
-            }
-        }
-
         private static async Task Main( string[] args )
         {
             var hostApplicationLifetime = default(IHostApplicationLifetime);
@@ -130,16 +29,16 @@ namespace lingvo.postagger.webService
             {
                 //---------------------------------------------------------------//
                 var opts = new Config();
-                using var env = await environment.CreateAsync( opts ).CAX();
+                using var env = await PosTaggerEnvironment.CreateAsync( opts, LanguageTypeEnum.Ru ).CAX();
 
-                using var concurrentFactory = new ConcurrentFactory( env.PosTaggerProcessorConfig, env.MorphoModel, env.MorphoAmbiguityResolverModel, opts );
+                using var concurrentFactory = new ConcurrentFactory( env, opts );
                 //---------------------------------------------------------------//
 
                 var host = Host.CreateDefaultBuilder( args )
                                .ConfigureLogging( loggingBuilder => loggingBuilder.ClearProviders().AddDebug().AddConsole().AddEventSourceLogger()
                                                               .AddEventLog( new EventLogSettings() { LogName = SERVICE_NAME, SourceName = SERVICE_NAME } ) )
                                //---.UseWindowsService()
-                               .ConfigureServices( (hostContext, services) => services.AddSingleton< IConfig >( opts ).AddSingleton< IAntiBotConfig >( opts ).AddSingleton( concurrentFactory ) )
+                               .ConfigureServices( (hostContext, services) => services.AddSingleton( opts ).AddSingleton< IAntiBotConfig >( opts ).AddSingleton( concurrentFactory ) )
                                .ConfigureWebHostDefaults( webBuilder => webBuilder.UseStartup< Startup >() )
                                .Build();
                 hostApplicationLifetime = host.Services.GetService< IHostApplicationLifetime >();

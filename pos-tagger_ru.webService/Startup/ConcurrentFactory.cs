@@ -17,7 +17,7 @@ namespace lingvo.postagger.webService
 		private readonly SemaphoreSlim                         _Semaphore;
         private readonly ConcurrentStack< PosTaggerProcessor > _Stack;
 
-        public ConcurrentFactory( PosTaggerProcessorConfig config, IMorphoModel morphoModel, MorphoAmbiguityResolverModel morphoAmbiguityModel, IConfig opts )
+        internal ConcurrentFactory( PosTaggerEnvironment env, Config opts )
 		{
 			var instanceCount = opts.CONCURRENT_FACTORY_INSTANCE_COUNT;
             if ( instanceCount <= 0 ) throw (new ArgumentException( nameof(instanceCount) ));
@@ -27,7 +27,7 @@ namespace lingvo.postagger.webService
             _Stack     = new ConcurrentStack< PosTaggerProcessor >();
             for ( int i = 0; i < instanceCount; i++ )
 			{
-                _Stack.Push( new PosTaggerProcessor( config, morphoModel, morphoAmbiguityModel ) );
+                _Stack.Push( env.CreatePosTaggerProcessor() );
 			}			
 		}
         public void Dispose()
@@ -39,7 +39,7 @@ namespace lingvo.postagger.webService
 			_Stack.Clear();
         }
 
-		public IConfig Config { get; }
+		internal Config Config { get; }
 
         public async Task< List< word_t[] > > Run_Details( string text, bool splitBySmiles, bool? mergeChains, bool? processMorphology, bool? applyMorphoAmbiguityPreProcess )
         {
