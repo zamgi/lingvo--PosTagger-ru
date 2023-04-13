@@ -744,7 +744,7 @@ namespace lingvo.morphology
             _TreeDictionary = new TreeDictionary();
             _NativeMemAllocator = new NativeMemAllocationMediator( nativeBlockAllocSize: 4096 * 100 );
 
-            ModelLoader.RunLoad( in config, _TreeDictionary, _NativeMemAllocator );
+            ModelLoader.RunLoad( config, _TreeDictionary, _NativeMemAllocator );
         }
         public void Dispose() => _NativeMemAllocator.Dispose();
         #endregion

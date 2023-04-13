@@ -162,12 +162,11 @@ namespace lingvo.morphology
 		}
         protected static string GetFullFilename( string folder, string filename )
         {
-            if ( folder == null )
-                folder = string.Empty;
+            if ( folder.IsNullOrEmpty() || filename .IsNullOrEmpty() )
+                return (filename);
 
-            var fullFilename = folder.TrimEnd( '/', ' ' ) + '/' + filename.TrimStart( '/', ' ' );
-            return (fullFilename);
-            //return (Path.Combine( folder.TrimEnd( '/' ), filename.TrimStart( '/' ) ));
+            var ffn = folder.TrimEnd( '/', ' ' ) + '/' + filename.TrimStart( '/', ' ' );
+            return (ffn);
         }
 
         private static void CheckConfig( in MorphoModelConfig config )
